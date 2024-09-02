@@ -60,7 +60,6 @@ function Footer(): JSX.Element {
         </div>
       </div>
     </footer>
-
   );
 }
 

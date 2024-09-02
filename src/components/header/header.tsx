@@ -32,7 +32,6 @@ function LoginButton(): JSX.Element {
   );
 }
 
-
 function Header(): JSX.Element {
   const user = useAppSelector(selectUser);
 
@@ -53,11 +52,6 @@ function Header(): JSX.Element {
               </Link>
             </li>
             {user ? <MyBookingButton /> : ''}
-            {/* <li className="main-nav__item">
-              <Link className="link" to={user ? PageRoute.Reservations : PageRoute.Login}>
-                Мои бронирования
-              </Link>
-            </li> */}
           </ul>
         </nav>
         <div className="header__side-nav">

@@ -62,7 +62,6 @@ function ReservationListItem({ id, date, location, peopleCount, time, quest }: P
         </button>
       </div>
     </div>
-
   );
 }
 

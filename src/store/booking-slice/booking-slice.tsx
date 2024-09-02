@@ -39,7 +39,6 @@ const bookingSlice = createSliceWithThunks({
         if (!isAxiosNotFoundError(err)) {
           showErrorMessage(err, dispatch);
         }
-
         throw err;
       }),
       {

@@ -1,4 +1,3 @@
-//Приключения, Ужасы,  Мистика, Детектив, Sci-fi
 export enum TypeName {
   HORROR = 'horror',
   MYSTIC = 'mystic',

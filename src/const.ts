@@ -5,8 +5,6 @@ export enum AppRoute {
   Login = '/logIn',
   Reservations = '/my-quests',
   Booking = '/booking',
-  // NotFound = '/404',
-  // ErrorPage = '/ErrorPage',
   Quest = '/quest',
   Id = ':id',
   Contacts = '/contacts'
@@ -16,10 +14,9 @@ export enum PageRoute {
   Main = AppRoute.Main,
   Login = AppRoute.Login,
   Quest = `${AppRoute.Quest}/${AppRoute.Id}`,
+  Booking = `${AppRoute.Quest}/${AppRoute.Id}${AppRoute.Booking}`,
   Reservations = AppRoute.Reservations,
-  // ErrorPage = AppRoute.ErrorPage,
   Contacts = AppRoute.Contacts,
-  Booking = AppRoute.Booking
 }
 
 export enum ServerRoute {
@@ -55,3 +52,11 @@ export const LEVEL_TRANSLATION: Readonly<Record<LevelName | typeof ANY_LEVEL, st
 };
 
 export type SelectedLevel = LevelName | typeof ANY_LEVEL;
+
+export const LOGIN_PAGE_VALIDATION_ERROR_MESSAGES = {
+  ILLEGAL_PASSWORD: 'Please enter a valid password.',
+  ILLEGAL_EMAIL: 'Please enter a valid email address.'
+} as const;
+
+export const UNKNOWN_ERROR_MESSAGE = 'Неизвестная ошибка';
+export const CONFLICT_ERROR_MESSAGE = 'Пользователь с введенными данными не зарегестрирован';

@@ -1,23 +1,11 @@
 import { FormEvent, useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../hooks/hooks';
 import { useNavigate } from 'react-router-dom';
-// import cn from 'classnames';
 import Footer from '../../components/footer/footer';
 import Header from '../../components/header/header';
 import { loginAction, selectAuthorizationStatus, selectErrorMessage } from '../../store/user-slice/user-slice';
-import { AuthorizationStatus, PageRoute } from '../../const';
+import { AuthorizationStatus, LOGIN_PAGE_VALIDATION_ERROR_MESSAGES } from '../../const';
 import { resetErrorMessage } from '../../store/error-slice/error-slice';
-
-// export const TEST_LOGIN_PAGE_IDS = {
-//   PASSWORD_INPUT: 'user-password-input-id',
-//   EMAIL_INPUT: 'user-email-input-id',
-//   LOGIN_BUTTON: 'form-login-button-id'
-// } as const;
-
-export const LOGIN_PAGE_VALIDATION_ERROR_MESSAGES = {
-  ILLEGAL_PASSWORD: 'Please enter a valid password.',
-  ILLEGAL_EMAIL: 'Please enter a valid email address.'
-} as const;
 
 function isPasswordValid(password: string): boolean {
   return /[A-z]+/.test(password) && /\d+/.test(password) && password.length >= 3 && password.length <= 15;
@@ -27,7 +15,6 @@ function isEmailValid(email: string): boolean {
 }
 
 function LoginPage(): JSX.Element {
-
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const dispatch = useAppDispatch();
@@ -37,13 +24,14 @@ function LoginPage(): JSX.Element {
 
   useEffect(() => () => {
     dispatch(resetErrorMessage());
-  }, [dispatch]);
 
-  if (authStatus === AuthorizationStatus.Auth) {
-    navigate(PageRoute.Main);
-  }
+    if (authStatus === AuthorizationStatus.Auth) {
+      navigate(-1);
+    }
+  }, [dispatch, authStatus, navigate]);
 
   const isFormDataValid = isPasswordValid(password) && isEmailValid(email);
+
   const errors = [
     ...(!isPasswordValid(password) ? [LOGIN_PAGE_VALIDATION_ERROR_MESSAGES.ILLEGAL_PASSWORD] : []),
     ...(!isEmailValid(email) ? [LOGIN_PAGE_VALIDATION_ERROR_MESSAGES.ILLEGAL_EMAIL] : []),
@@ -59,6 +47,7 @@ function LoginPage(): JSX.Element {
 
   function handleSubmit(evt: FormEvent) {
     evt.preventDefault();
+
     if (isFormDataValid) {
       dispatch(loginAction({ password, email }));
     }
@@ -66,7 +55,7 @@ function LoginPage(): JSX.Element {
 
   return (
     <div className="wrapper">
-      <Header /> {/* убрать кнопку входа*/}
+      <Header />
       <main className="decorated-page login">
         <div className="decorated-page__decor" aria-hidden="true">
           <picture>

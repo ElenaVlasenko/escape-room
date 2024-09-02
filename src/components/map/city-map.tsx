@@ -37,7 +37,7 @@ function CityMap(props: MapProps): JSX.Element {
     if (map) {
       const markerLayer = layerGroup().addTo(map);
 
-      // revers добавлен, т.к. сервер присылает одинаковые координаты для 2х маркеров и это вызывает перекрытие активного маркера пассивным
+      // revers добавлен, т.к. сервер иногда присылает одинаковые координаты для нескольких маркеров и это вызывает перекрытие активного маркера пассивным
       const selectedPoint = [...points.reverse()].find((point) => point.id === selectedPointId);
 
       points.forEach((point) => {

@@ -8,8 +8,7 @@ const questsApi = {
     return data;
   },
 
-  async getQuest(id) {
-    // throw Error;
+  async getQuest(id: string) {
     const { data } = await api.get<Quest>(`${ServerRoute.Quests}/${id}`);
     return data;
   },

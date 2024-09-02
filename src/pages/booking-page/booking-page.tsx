@@ -4,7 +4,7 @@ import Header from '../../components/header/header';
 import { AuthorizationStatus, PageRoute } from '../../const';
 import { Booking, Day, Quest } from '../../types';
 import SlotList from '../../components/schedule-list/schedule-list';
-import { FormEventHandler, useState } from 'react';
+import { FormEventHandler, useEffect, useState } from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import CityMap, { Point } from '../../components/map/city-map';
 import { useAppDispatch, useAppSelector } from '../../hooks/hooks';
@@ -38,6 +38,17 @@ function BookingPage({ selectedQuest, bookingList }: Props): JSX.Element | null 
   const authStatus = useAppSelector(selectAuthorizationStatus);
   const [wasSubmitted, setWasSubmitted] = useState(false);
 
+  useEffect(() => {
+    if (isReservationAdded) {
+      dispatch(resetReservationWasAdded());
+      navigate(PageRoute.Reservations);
+    }
+
+    if (selectedQuest === null) {
+      navigate(PageRoute.Main);
+    }
+  }, [isReservationAdded, dispatch, navigate, selectedQuest]);
+
   const onPointClick = (pointId: string) => {
     setPlaceId(pointId);
     setDate(null);
@@ -48,26 +59,13 @@ function BookingPage({ selectedQuest, bookingList }: Props): JSX.Element | null 
   const {
     register,
     handleSubmit,
-    // watch,
-    // control,
     formState: { errors },
   } = useForm<Inputs>();
-
-  if (isReservationAdded) {
-    dispatch(resetReservationWasAdded());
-    navigate(PageRoute.Reservations);
-    return null;
-  }
 
   const selectedBooking = bookingList.find(({ id }) => id === placeId);
 
   if (selectedBooking === undefined) {
     throw Error(`empty booking list for quest with id: ${selectedQuest.id}`);
-  }
-
-  if (selectedQuest === null) {
-    navigate(PageRoute.Main);
-    return null;
   }
 
   const { title } = selectedQuest;
@@ -84,7 +82,9 @@ function BookingPage({ selectedQuest, bookingList }: Props): JSX.Element | null 
     ...Object.values(errors).map(({ message }) => message ?? 'Ошибка валидации формы.'),
   ];
 
-  const getMessage = (): JSX.Element | null => errorMessages.length > 0 ? <>{errorMessages.map((message) => (<span key={message}>{message}<br /></ span>))}</> : null;
+  const getMessage = (): JSX.Element | null => wasSubmitted && errorMessages.length > 0
+    ? <>{errorMessages.map((message) => (<span key={message}>{message}<br /></ span>))}</>
+    : null;
 
   const isFormValid = errorMessages.length === 0;
 
@@ -118,11 +118,11 @@ function BookingPage({ selectedQuest, bookingList }: Props): JSX.Element | null 
           <picture>
             <source
               type="image/webp"
-              srcSet="img/content/maniac/maniac-bg-size-m.webp, img/content/maniac/maniac-bg-size-m@2x.webp 2x"
+              srcSet="/img/content/maniac/maniac-bg-size-m.webp, img/content/maniac/maniac-bg-size-m@2x.webp 2x"
             />
             <img
-              src="img/content/maniac/maniac-bg-size-m.jpg"
-              srcSet="img/content/maniac/maniac-bg-size-m@2x.jpg 2x"
+              src="/img/content/maniac/maniac-bg-size-m.jpg"
+              srcSet="/img/content/maniac/maniac-bg-size-m@2x.jpg 2x"
               width={1366}
               height={1959}
               alt=""
@@ -176,15 +176,7 @@ function BookingPage({ selectedQuest, bookingList }: Props): JSX.Element | null 
                       }
                     })
                   }
-                  // type="text"
                   placeholder="Имя"
-                // onChange={(evt) => setName(evt.target.value)}
-                // type="text"
-                // id="name"
-                // name="name"
-                // placeholder="Имя"
-                // required
-                // pattern="[А-Яа-яЁёA-Za-z'- ]{1,}"
                 />
               </div>
               <div className="custom-input booking-form__input">
@@ -200,15 +192,7 @@ function BookingPage({ selectedQuest, bookingList }: Props): JSX.Element | null 
                     }
                   )
                   }
-                  // type="text"
                   placeholder="Телефон"
-                // onChange={(evt) => setTelNumber(evt.target.value)}
-                // type="tel"
-                // id="tel"
-                // name="tel"
-                // placeholder="Телефон"
-                // required
-                // pattern="[0-9]{10,}"
                 />
               </div>
               <div className="custom-input booking-form__input">
@@ -232,21 +216,12 @@ function BookingPage({ selectedQuest, bookingList }: Props): JSX.Element | null 
                     }
                   )}
                   placeholder="Количество участников"
-                // type="number"
-                // onChange={(evt) => setParticipantNumber(evt.target.value)}
-                // id="person"
-                // name="person"
-                // placeholder="Количество участников"
-                // required
                 />
               </div>
               <label className="custom-checkbox booking-form__checkbox booking-form__checkbox--children">
                 <input
                   type="checkbox"
                   {...register('withChildren')}
-                // id="withChildren"
-                // name="withChildren"
-                // defaultChecked
                 />
                 <span className="custom-checkbox__icon">
                   <svg width={20} height={17} aria-hidden="true">
@@ -259,6 +234,7 @@ function BookingPage({ selectedQuest, bookingList }: Props): JSX.Element | null 
               </label>
             </fieldset>
             <button
+              onClick={() => setWasSubmitted(true)}
               disabled={!isAgreementsAccepted}
               className="btn btn--accent btn--cta booking-form__submit"
               type="submit"

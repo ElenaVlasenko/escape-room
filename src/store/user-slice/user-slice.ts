@@ -1,14 +1,11 @@
 import { buildCreateSlice, asyncThunkCreator } from '@reduxjs/toolkit';
 import { User, AuthParams, Reservation } from '../../types';
 import { getToken } from '../../api/token';
-import { AuthorizationStatus } from '../../const';
+import { AuthorizationStatus, CONFLICT_ERROR_MESSAGE, UNKNOWN_ERROR_MESSAGE } from '../../const';
 import { CONFLICT_STATUS, isAxiosNotFoundError } from '../../utils';
 import { showErrorMessage } from '../error-slice/error-slice';
 import { UserApi } from '../../api/user-api';
 import { AddBookingParams, ReservationApi } from '../../api/reservation-api';
-
-export const UNKNOWN_ERROR_MESSAGE = 'Неизвестная ошибка';
-export const CONFLICT_ERROR_MESSAGE = 'Пользователь с введенными данными не зарегестрирован';
 
 const createSliceWithThunks = buildCreateSlice({
   creators: { asyncThunk: asyncThunkCreator },
@@ -17,21 +14,17 @@ const createSliceWithThunks = buildCreateSlice({
 type UserState = {
   user: User | null;
   token: string | null;
-  // isUserDataLoading: boolean;
   reservations: Reservation[];
   errorMessage: string | null;
   reservationWasAdded: boolean;
-  // addingToFavoritesIds: string[];
 }
 
 const defaultState: UserState = {
   user: null,
   token: getToken(),
-  // isUserDataLoading: false,
   reservations: [],
   errorMessage: null,
   reservationWasAdded: false,
-  // addingToFavoritesIds: [],
 };
 
 export const USER_SLICE_NAME = 'user';
@@ -44,8 +37,6 @@ export const createUserSlice = (initialState: UserState) => createSliceWithThunk
     selectErrorMessage: (state) => state.errorMessage,
     selectReservations: (state) => state.reservations,
     selectReservationWasAdded: (state) => state.reservationWasAdded,
-    // selectIsUserDataLoading: (state) => state.isUserDataLoading,
-    // selectAddingToFavoritesIds: (state) => state.addingToFavoritesIds,
     selectAuthorizationStatus: (state) => {
       if (state.user) {
         return AuthorizationStatus.Auth;
@@ -87,18 +78,13 @@ export const createUserSlice = (initialState: UserState) => createSliceWithThunk
         return { user, reservations };
       },
       {
-        pending: (state) => {
-          // state.isUserDataLoading = true;
-        },
         fulfilled: (state, action) => {
           const { user, reservations } = action.payload;
           state.user = user;
           state.reservations = reservations;
-          // state.isUserDataLoading = false;
           state.errorMessage = null;
         },
         rejected: (state, action) => {
-          // state.isUserDataLoading = false;
           state.errorMessage = action.error.message?.includes(CONFLICT_STATUS.toString()) ? CONFLICT_ERROR_MESSAGE : UNKNOWN_ERROR_MESSAGE;
         },
       }
@@ -141,14 +127,8 @@ export const createUserSlice = (initialState: UserState) => createSliceWithThunk
           const { payload: { user, reservations } } = action;
           state.user = user;
           state.reservations = reservations;
-          // state.isUserDataLoading = false;
-
-        },
-        pending: (state) => {
-          // state.isUserDataLoading = true;
         },
         rejected: (state) => {
-          // state.isUserDataLoading = false;
           state.token = null;
         },
       }
@@ -166,49 +146,16 @@ export const createUserSlice = (initialState: UserState) => createSliceWithThunk
           state.reservations = [...state.reservations, action.payload];
           state.reservationWasAdded = true;
         },
-        pending: (state) => {
-
-        },
-        rejected: (state, action) => {
-        }
       }
     ),
-    // fetchAddToFavoritesAction: create.asyncThunk<ProductListItem & { isFavorite: boolean }, string, { extra: { reservationApi: ReservationApi } }>(
-    //   async (id, { extra: { reservationApi }, dispatch }) => reservationApi.addToFavorite(id).catch((err) => {
-    //     showErrorMessage(err, dispatch);
-    //     throw err;
-    //   }),
-    //   {
-    //     pending: (state, action) => {
-
-    //       state.addingToFavoritesIds = [...state.addingToFavoritesIds, action.meta.arg];
-    //     },
-    //     fulfilled: (state, action) => {
-    //       const updatedProduct = action.payload;
-
-    //       state.reservations = [...state.reservations, updatedProduct];
-
-    //       state.addingToFavoritesIds = state.addingToFavoritesIds.filter((id) => id !== action.meta.arg);
-    //     },
-    //     rejected: (state, action) => {
-    //       state.addingToFavoritesIds = state.addingToFavoritesIds.filter((id) => id !== action.meta.arg);
-    //     },
-    //   }
-    // ),
     deleteReservationAction: create.asyncThunk<void, string, { extra: { reservationApi: ReservationApi } }>(
       async (id, { extra: { reservationApi }, dispatch }) => reservationApi.delete(id).catch((err) => {
         showErrorMessage(err, dispatch);
         throw err;
       }),
       {
-        pending: (state, action) => {
-          // state.addingToFavoritesIds = [...state.addingToFavoritesIds, action.meta.arg];
-        },
         fulfilled: (state, action) => {
           state.reservations = state.reservations.filter(({ id }) => id !== action.meta.arg);
-        },
-        rejected: (state, action) => {
-          // state.addingToFavoritesIds = state.addingToFavoritesIds.filter((id) => id !== action.meta.arg);
         },
       }
     )
@@ -227,20 +174,15 @@ export const {
   selectAuthorizationStatus,
   selectUser,
   selectReservations,
-  // selectIsUserDataLoading,
   selectErrorMessage,
   selectReservationWasAdded
-  // selectAddingToFavoritesIds
 } = userSlice.selectors;
 
 export const {
-  // signUpAction,
   resetErrorMessage,
   loginAction,
   logoutAction,
   checkAuthAction,
-  // fetchAddToFavoritesAction,
-  // fetchDeleteFromFavoritesAction,
   resetReservations,
   addReservationAction,
   deleteReservationAction,

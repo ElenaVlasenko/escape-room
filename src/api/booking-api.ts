@@ -5,7 +5,6 @@ import api from './api';
 const bookingApi = {
 
   async getList(questId: string): Promise<Booking[]> {
-    // throw Error;
     const { data } = await api.get<Booking[]>(`${ServerRoute.Quests}/${questId}${ServerRoute.Booking}`);
     return data;
   },

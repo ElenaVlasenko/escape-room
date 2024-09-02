@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import Footer from '../../components/footer/footer';
 import Header from '../../components/header/header';
 import { Quest } from '../../types';
-import { AuthorizationStatus, PageRoute } from '../../const';
+import { AppRoute, AuthorizationStatus, PageRoute } from '../../const';
 import { useAppSelector } from '../../hooks/hooks';
 import { selectAuthorizationStatus } from '../../store/user-slice/user-slice';
 
@@ -60,7 +60,7 @@ function QuestPage({ selectedQuest }: Props): JSX.Element {
             </p>
             <Link
               className="btn btn--accent btn--cta quest-page__btn"
-              to={AuthorizationStatus.Auth === authStatus ? PageRoute.Booking : PageRoute.Login}
+              to={AuthorizationStatus.Auth === authStatus ? `${AppRoute.Quest}/${selectedQuest.id}${AppRoute.Booking}` : PageRoute.Login}
             >
               Забронировать
             </Link>

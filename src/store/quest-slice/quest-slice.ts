@@ -39,7 +39,6 @@ const questSlice = createSliceWithThunks({
         if (!isAxiosNotFoundError(err)) {
           showErrorMessage(err, dispatch);
         }
-
         throw err;
       }),
       {
@@ -56,8 +55,8 @@ const questSlice = createSliceWithThunks({
         rejected: (state, action) => {
           if (isNotFoundError(action.error)) {
             state.notFound = true;
-            state.isQuestLoading = false;
           }
+          state.isQuestLoading = false;
         }
       }
     )

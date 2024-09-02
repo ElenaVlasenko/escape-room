@@ -1,7 +1,6 @@
 import { LEVEL_TRANSLATION, SelectedLevel } from '../../const';
 import { useAppDispatch, useAppSelector } from '../../hooks/hooks';
 import { selectSelectedLevel, setSelectedLevel } from '../../store/quests-slice/quests-slice';
-import { LevelName } from '../../types';
 import LevelListItem from './level-list-item';
 
 function LevelList(): JSX.Element {
@@ -10,7 +9,6 @@ function LevelList(): JSX.Element {
   const dispatch = useAppDispatch();
 
   const handleClick = (levelName: SelectedLevel): void => {
-    console.log('levelName:', levelName)
     dispatch(setSelectedLevel(levelName));
   };
 

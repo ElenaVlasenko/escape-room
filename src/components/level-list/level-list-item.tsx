@@ -1,5 +1,4 @@
 import { SelectedLevel } from '../../const';
-import { LevelName } from '../../types';
 
 type Props = {
   levelName: SelectedLevel;

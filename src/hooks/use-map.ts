@@ -40,7 +40,7 @@ function useMap(
     }
   };
 
-  useEffect(effectCallback, [mapRef, map, center]);
+  useEffect(effectCallback, [mapRef, map, center, zoom]);
 
   return map;
 }

@@ -4,13 +4,7 @@ import api from './api';
 import { dropToken, saveToken } from './token';
 
 export const userApi = {
-  // async signUp(params: SignUpParams): Promise<User> {
-  //   // throw Error;
-  //   const { data } = await api.post<User>(ServerRoute.Registration, params);
-  //   return data;
-  // },
   async login(params: AuthParams): Promise<User> {
-    // throw Error;
     const { data } = await api.post<User>(ServerRoute.LogIn, params);
     saveToken(data.token);
     return data;

@@ -38,7 +38,7 @@ function QuestPagePicker(): JSX.Element | null {
     [selectedQuest, id, isSelectedQuestLoading, isSelectedQuestNotFound, dispatch, error]
   );
 
-  if (isSelectedQuestLoading) {
+  if (selectedQuest === null || isSelectedQuestLoading) {
     return <Spinner />;
   }
 
@@ -48,10 +48,6 @@ function QuestPagePicker(): JSX.Element | null {
 
   if (error) {
     return <ErrorPage />;
-  }
-
-  if (selectedQuest === null) {
-    return <Spinner />;
   }
 
   return <QuestPage selectedQuest={selectedQuest} />;
